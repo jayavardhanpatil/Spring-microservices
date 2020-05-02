@@ -4,6 +4,7 @@ package io.spring.moviecatalogservice.resources;
 import io.spring.moviecatalogservice.models.CatalogItem;
 import io.spring.moviecatalogservice.models.Movie;
 import io.spring.moviecatalogservice.models.Rating;
+import io.spring.moviecatalogservice.models.UserRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +27,12 @@ public class MovieCatalogResource {
     @RequestMapping("/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId){
 
+        UserRating ratings = restTemplate.getForObject("http://localhost:8083//ratings/users/"+userId, UserRating.class);
 
-
-        List<Rating> ratings = Arrays.asList(
-          new Rating("1234", 3),
-            new Rating("4567", 5)
-        );
-
-        return ratings.stream().map(rating ->{
+        return ratings.getUserRating().stream().map(rating ->{
             Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
-            return new CatalogItem(movie.getName(), "This is the best TV Show ever", rating.getRating());}).collect(Collectors.toList());
+            return new CatalogItem(movie.getName(), "This is the best TV Show ever", rating.getRating());
+        }).collect(Collectors.toList());
 
 //        return Collections.singletonList(
 //                new CatalogItem("Game of Thrones", "This is the best TV Show ever", 1)

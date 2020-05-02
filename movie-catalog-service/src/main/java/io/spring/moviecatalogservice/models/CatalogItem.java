@@ -6,6 +6,7 @@ public class CatalogItem {
     private String desc;
     private int id;
 
+
     public CatalogItem(String name, String desc, int id) {
         this.name = name;
         this.desc = desc;

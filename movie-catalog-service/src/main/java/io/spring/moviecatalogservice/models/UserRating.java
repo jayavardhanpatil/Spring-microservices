@@ -1,10 +1,13 @@
-package io.spring.ratingsdataservice.models;
+package io.spring.moviecatalogservice.models;
 
 import java.util.List;
 
 public class UserRating {
 
     private List<Rating> userRating;
+
+    public UserRating() {
+    }
 
     public List<Rating> getUserRating() {
         return userRating;
