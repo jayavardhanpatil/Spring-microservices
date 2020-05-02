@@ -1,6 +1,7 @@
 package io.spring.moviecatalogservice.resources;
 
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.spring.moviecatalogservice.models.CatalogItem;
 import io.spring.moviecatalogservice.models.Movie;
 import io.spring.moviecatalogservice.models.Rating;
@@ -25,18 +26,26 @@ public class MovieCatalogResource {
     private RestTemplate restTemplate;
 
     @RequestMapping("/{userId}")
+    @HystrixCommand(fallbackMethod = "getFallBackCatalog")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId){
 
-        UserRating ratings = restTemplate.getForObject("http://localhost:8083//ratings/users/"+userId, UserRating.class);
+        UserRating ratings = restTemplate.getForObject("http://ratings-data-service/ratings/users/"+userId, UserRating.class);
 
-        return ratings.getUserRating().stream().map(rating ->{
-            Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
-            return new CatalogItem(movie.getName(), "This is the best TV Show ever", rating.getRating());
+        return ratings.getUserRating().stream()
+                .map(rating ->{
+                    //System.out.println(restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), String.class));
+
+                    Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
+                    return new CatalogItem(movie.getName(), movie.getOverView(), rating.getRating());
         }).collect(Collectors.toList());
 
 //        return Collections.singletonList(
 //                new CatalogItem("Game of Thrones", "This is the best TV Show ever", 1)
 //        );
+    }
+
+    public List<CatalogItem> getFallBackCatalog(@PathVariable("userId") String userId){
+        return Arrays.asList(new CatalogItem("No Movie","", 0));
     }
 
 }

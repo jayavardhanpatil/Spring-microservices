@@ -3,13 +3,13 @@ package io.spring.moviecatalogservice.models;
 public class CatalogItem {
 
     private String name;
-    private String desc;
+    private String overView;
     private int id;
 
 
-    public CatalogItem(String name, String desc, int id) {
+    public CatalogItem(String name, String overView, int id) {
         this.name = name;
-        this.desc = desc;
+        this.overView = overView;
         this.id = id;
     }
 
@@ -22,11 +22,11 @@ public class CatalogItem {
     }
 
     public String getDesc() {
-        return desc;
+        return overView;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDesc(String overView) {
+        this.overView = overView;
     }
 
     public int getId() {
