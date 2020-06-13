@@ -1,7 +1,9 @@
 package io.spring.movieinfoservice.exception;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +20,14 @@ public class CustomizeResposneEntityExceptionHandler extends ResponseEntityExcep
     public final ResponseEntity handlerException(Exception e, WebRequest request){
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(), request.getDescription(false));
 
-        return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(response, HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(new Date(), "Validation Failed", ex.getMessage());
+
+        return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
     }
 
 }

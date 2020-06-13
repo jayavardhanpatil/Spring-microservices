@@ -5,10 +5,14 @@ import io.spring.movieinfoservice.models.MovieSummary;
 import io.spring.movieinfoservice.exception.MovieIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/movies")
@@ -38,6 +42,18 @@ public class MovieResource {
         }
 
         return new Movie(movieId, movieSummary.getTitle(), movieSummary.getOverview());
+    }
+
+
+    @PostMapping("")
+    public ResponseEntity<Object> createMovieResourse(@Valid @RequestBody Movie body){
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/")
+                .buildAndExpand(body.getMovieId()).toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 }

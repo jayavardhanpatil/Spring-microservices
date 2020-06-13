@@ -1,8 +1,12 @@
 package io.spring.movieinfoservice.models;
 
+import javax.validation.constraints.Size;
+
 public class Movie {
 
     String movieId;
+
+    @Size(min = 2, message = "Movie Name should be atleast 2 chars")
     String name;
     String overView;
 
