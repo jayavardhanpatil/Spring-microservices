@@ -1,0 +1,21 @@
+version: '2'
+services:
+  eureka-server:
+    image: discovery-server
+    expose:
+      - 8761
+    ports:
+      - 8761:8761
+
+  Movie-Catalog-service:
+    container_name: movie-catalog
+    image: movie-catalog-service:latest
+    expose:
+      - 8081
+    environment:
+      server.port: 8081
+      eureka.client.enabled: 'true'
+      eureka.host: eureka-server
+      eureka.instance.preferIpAddress: 'true'
+
+
